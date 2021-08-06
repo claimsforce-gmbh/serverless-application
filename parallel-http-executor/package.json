@@ -1,0 +1,32 @@
+{
+    "name": "parallel-http-executor",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Bogdan Melnychuk",
+            "email": "bogdan@claimsforce.com"
+        },
+        {
+            "name": "Maik Schmidt",
+            "email": "maik@claimsforce.com"
+        }
+    ],
+    "scripts": {
+        "tsc": "npx tsc",
+        "prebuild": "npx rimraf node_modules && npm install --only=production",
+        "build": "npx tsc && cp -R node_modules .build/",
+        "test": "npx jest test --passWithNoTests"
+    },
+    "dependencies": {
+        "axios": "0.21.1"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "8.10.81",
+        "@types/jest": "26.0.24",
+        "jest": "27.0.6",
+        "rimraf": "3.0.2",
+        "ts-jest": "27.0.4",
+        "ts-node": "10.1.0",
+        "typescript": "4.3.5"
+    }
+}

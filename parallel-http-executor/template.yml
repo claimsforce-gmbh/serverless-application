@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MemorySize:
+    Type: String
+    Default: 1024
+  Timeout:
+    Type: String
+    Default: 10
+  LogRetentionInDays:
+    Type: String
+    Default: 14
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: parallel-http-executor
+    Description: Use backend capacities to do parallel http executions.
+    Author: Bogdan Melnychuk, Maik Schmidt
+    SpdxLicenseId: MIT
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels:
+      - http
+      - performance
+    HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/parallel-http-executor
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/parallel-http-executor
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'POST, OPTIONS'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+  ParallelHttpExecutor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs14.x
+      Handler: index.handler
+      CodeUri: .build
+      MemorySize: !Ref MemorySize
+      Timeout: !Ref Timeout
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+
+  ParallelHttpExecutorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !Ref LogRetentionInDays
+      LogGroupName: !Sub /aws/lambda/${ParallelHttpExecutor}
