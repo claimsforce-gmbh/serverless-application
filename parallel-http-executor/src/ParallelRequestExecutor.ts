@@ -33,6 +33,7 @@ export class ParallelRequestExecutor {
                 body: response.data
             }
         } catch (e) {
+            console.error(e);
             return {
                 requestId: request.id,
                 status: 500
