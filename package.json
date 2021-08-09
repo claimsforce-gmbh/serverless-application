@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "deploy:infrastructure": "aws cloudformation deploy --stack-name ServerlessApplication --template-file ./infrastructure.yml --capabilities CAPABILITY_IAM"
+    }
+}
