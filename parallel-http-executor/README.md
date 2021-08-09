@@ -12,3 +12,8 @@ The `Timeout` configuration of the AWS Lambda who is doing the http executions.
 
 #### LogRetentionInDays (Default: `14`)
 The AWS CloudWatch `RetentionInDays` configuration of the AWS Lambda who is doing the http executions.
+
+### How to publish a new version?
+
+1. Increase semantic version in `package.json` and `template.yml`
+2. Run `npm run sam:publish`
