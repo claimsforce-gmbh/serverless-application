@@ -5,7 +5,7 @@ export interface Request {
     url: string;
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
     body?: string;
-    headers?: { [name: string]: string | undefined; }
+    headers?: Record<string, string>;
 }
 
 export interface Response {
