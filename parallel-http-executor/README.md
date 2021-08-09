@@ -44,7 +44,7 @@ export interface Request {
     url: string;
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
     body?: string;
-    headers?: Record<string, string>;
+    headers?: Record<string, string | undefined>;
 }
 ```
 
