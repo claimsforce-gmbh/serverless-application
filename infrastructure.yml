@@ -7,3 +7,19 @@ Resources:
       AccessControl: Private
       VersioningConfiguration:
         Status: Enabled
+
+  ArtifactsPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Artifacts
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: !Sub arn:aws:s3:::${Artifacts}/*
+            Principal:
+              Service: serverlessrepo.amazonaws.com
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
