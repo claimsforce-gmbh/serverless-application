@@ -4,7 +4,23 @@ Use backend capacities to do parallel http executions.
 
 ## How to install it?
 
-### Deploy Serverless Appliation Repository
+### Install through CloudFormation
+
+```yml
+Resources:
+    ParallelHttpExecutor:
+      Type: AWS::Serverless::Application
+      Properties:
+        Location:
+          ApplicationId: arn:aws:serverlessrepo:eu-central-1:973295464626:applications/parallel-http-executor
+          SemanticVersion: 1.0.0
+        Parameters:
+          MemorySize: 1024
+          Timeout: 10
+          LogRetentionInDays: 14
+```
+
+### Install through AWS Console
 
 1. Go to https://eu-central-1.console.aws.amazon.com/serverlessrepo/home?region=eu-central-1#/available-applications
 2. Search for "parallel-http-executor"
