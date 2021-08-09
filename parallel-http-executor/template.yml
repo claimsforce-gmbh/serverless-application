@@ -19,7 +19,7 @@ Metadata:
   AWS::ServerlessRepo::Application:
     Name: parallel-http-executor
     Description: Use backend capacities to do parallel http executions.
-    Author: Bogdan Melnychuk, Maik Schmidt
+    Author: claimsforce GmbH
     SpdxLicenseId: MIT
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
