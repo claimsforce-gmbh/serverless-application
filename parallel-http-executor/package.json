@@ -13,11 +13,10 @@
     ],
     "scripts": {
         "tsc": "npx tsc",
-        "prebuild": "npx rimraf node_modules && npm install --only=production",
-        "build": "npx tsc && cp -R node_modules .build/",
+        "build": "npx tsc && npx rimraf node_modules && npm install --only=production && cp -R node_modules .build/",
         "test": "npx jest test --passWithNoTests",
-        "prepublish": "npm run build && sam package --template-file template.yml --output-template-file packaged.yml --s3-bucket serverlessapplication-artifacts-o9oluwjniatl",
-        "publish": "sam publish --template packaged.yml --region eu-central-1"
+        "sam:prepare": "npm run build && sam package --template-file template.yml --output-template-file packaged.yml --s3-bucket serverlessapplication-artifacts-o9oluwjniatl",
+        "sam:publish": "npm run sam:prepare && sam publish --template packaged.yml --region eu-central-1 && rm packaged.yml"
     },
     "dependencies": {
         "axios": "0.21.1"
