@@ -6,12 +6,7 @@ const requestExecutor = new ParallelRequestExecutor();
 
 export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
     const requests: Request[] = JSON.parse(event.body || '[]');
-    const requestsWithCommonHeaders = requests.map((request): Request => ({
-        ...request,
-        headers: event.headers
-    }))
-
-    const responses: Response[] = await requestExecutor.executeAll(requestsWithCommonHeaders);
+    const responses: Response[] = await requestExecutor.executeAll(requests);
 
     return {
         statusCode: 200,
