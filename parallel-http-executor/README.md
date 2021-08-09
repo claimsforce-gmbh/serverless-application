@@ -4,7 +4,7 @@ Use backend capacities to do parallel http executions.
 
 ## How to install it?
 
-### Install through CloudFormation
+### Install through AWS CloudFormation
 
 ```yml
 Resources:
