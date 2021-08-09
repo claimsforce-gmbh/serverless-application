@@ -23,9 +23,9 @@ Metadata:
     Labels:
       - http
       - performance
-    HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/parallel-http-executor
+    HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/parallel-http-executor
     SemanticVersion: 1.0.0
-    SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/parallel-http-executor
+    SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/parallel-http-executor
 
 Globals:
   Api:
