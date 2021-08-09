@@ -5,12 +5,12 @@ test('parallel requests', async () => {
     const requests: Request[] = [
         {
             id: 'REQUEST_1',
-            url: 'https://samples.openweathermap.org/data/2.5/weather?q=London&appid=b1b15e88fa797225412429c1c50c122a1',
+            url: 'https://jsonplaceholder.typicode.com/todos/1',
             method: 'GET'
         },
         {
             id: 'REQUEST_2',
-            url: 'https://samples.openweathermap.org/data/2.5/weather?q=Hamburg',
+            url: 'https://jsonplaceholder.typicode.com/todos/2',
             method: 'GET'
         }
     ]
