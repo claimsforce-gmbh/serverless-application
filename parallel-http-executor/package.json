@@ -15,7 +15,9 @@
         "tsc": "npx tsc",
         "prebuild": "npx rimraf node_modules && npm install --only=production",
         "build": "npx tsc && cp -R node_modules .build/",
-        "test": "npx jest test --passWithNoTests"
+        "test": "npx jest test --passWithNoTests",
+        "prepublish": "npm run build && sam package --template-file template.yml --output-template-file packaged.yml --s3-bucket serverlessapplication-artifacts-o9oluwjniatl",
+        "publish": "sam publish --template packaged.yml --region eu-central-1"
     },
     "dependencies": {
         "axios": "0.21.1"
