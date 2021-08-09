@@ -12,6 +12,3 @@ The `Timeout` configuration of the AWS Lambda who is doing the http executions.
 
 #### LogRetentionInDays (Default: `14`)
 The AWS CloudWatch `RetentionInDays` configuration of the AWS Lambda who is doing the http executions.
-
-#### ExportNameEndpoint (Default: `ParallelHttpExecutor`)
-The AWS CloudFormation resource export name for the created API endpoint value.

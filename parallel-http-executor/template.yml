@@ -11,9 +11,6 @@ Parameters:
   LogRetentionInDays:
     Type: String
     Default: 14
-  ExportNameEndpoint:
-    Type: String
-    Default: ParallelHttpExecutor
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -62,4 +59,3 @@ Resources:
 Outputs:
   Endpoint:
     Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${ServerlessRestApiProdStage}
-    Export: !Ref ExportNameEndpoint
