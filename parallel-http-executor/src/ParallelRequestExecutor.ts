@@ -15,6 +15,9 @@ export interface Response {
 }
 
 export class ParallelRequestExecutor {
+    constructor(private readonly requestTimeout: number) {
+    }
+
     public executeAll(requests: Request[]): Promise<Response[]> {
         return Promise.all(requests.map((r) => this.makeRequest(r)));
     }
@@ -25,7 +28,8 @@ export class ParallelRequestExecutor {
                 method: request.method,
                 url: request.url,
                 data: request.body,
-                headers: request.headers
+                headers: request.headers,
+                timeout: this.requestTimeout
             });
             return {
                 requestId: request.id,
@@ -33,10 +37,10 @@ export class ParallelRequestExecutor {
                 body: response.data
             }
         } catch (e) {
-            console.error(e);
             return {
                 requestId: request.id,
-                status: 500
+                status: 500,
+                body: e.message
             }
         }
     }
