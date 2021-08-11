@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MemorySize:
+    Type: String
+    Default: 2048
+  Timeout:
+    Type: String
+    Default: 10
+  LogRetentionInDays:
+    Type: String
+    Default: 14
+  AssetExpirationInDays:
+    Type: String
+    Default: 1
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: content-to-pdf
+    Description: Convert HTML and/or plain text into a PDF.
+    Author: claimsforce GmbH
+    SpdxLicenseId: MIT
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels:
+      - converter
+      - pdf
+      - html
+    HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
+
+Resources:
+  AssetBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            ExpirationInDays: !Ref AssetExpirationInDays
+      VersioningConfiguration:
+        Status: Enabled
+
+  ContentToPDF:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs14.x
+      Handler: index.handler
+      CodeUri: .build
+      MemorySize: !Ref MemorySize
+      Timeout: !Ref Timeout
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref AssetBucket
+      Environment:
+        Variables:
+          ASSET_BUCKET: !Ref AssetBucket
+
+  ContentToPDFLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !Ref LogRetentionInDays
+      LogGroupName: !Sub /aws/lambda/${ContentToPDF}
+
+Outputs:
+  FunctionName:
+    Value: !Ref ContentToPDF

@@ -1,0 +1,31 @@
+{
+    "name": "content-to-pdf",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Maik Schmidt",
+            "email": "maik@claimsforce.com"
+        }
+    ],
+    "scripts": {
+        "tsc": "npx tsc",
+        "build": "npx tsc && npx rimraf node_modules && npm install --only=production && cp -R node_modules .build/",
+        "sam:prepare": "npm run build && sam package --template-file template.yml --output-template-file packaged.yml --s3-bucket serverlessapplication-artifacts-o9oluwjniatl",
+        "sam:publish": "npm run sam:prepare && sam publish --template packaged.yml --region eu-central-1 && rm packaged.yml"
+    },
+    "dependencies": {
+        "aws-sdk": "2.965.0",
+        "chrome-aws-lambda": "10.1.0",
+        "content-disposition": "0.5.3",
+        "puppeteer-core": "10.2.0",
+        "puppeteer-report": "3.0.1",
+        "uuid": "8.3.2"
+    },
+    "devDependencies": {
+        "@types/content-disposition": "0.5.4",
+        "@types/uuid": "8.3.1",
+        "rimraf": "3.0.2",
+        "ts-node": "10.1.0",
+        "typescript": "4.3.5"
+    }
+}
