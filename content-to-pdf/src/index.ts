@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 import chromium from 'chrome-aws-lambda';
 import contentDisposition from 'content-disposition';
+import md5 from 'md5';
 import puppeteer from 'puppeteer-core';
 import { pdfPage } from 'puppeteer-report';
-import { v4 as uuid } from 'uuid';
 
 const { ASSET_BUCKET } = process.env as Record<string, string>;
 const s3 = new AWS.S3();
@@ -20,37 +20,50 @@ interface Response {
 }
 
 export const handler = async (event: RequestEvent): Promise<Response> => {
-    const browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath,
-        headless: chromium.headless
-    });
+    const objectKey = md5(event.content).toString();
 
-    const tab = await browser.newPage();
+    try {
+        await s3
+            .getObject({
+                Bucket: ASSET_BUCKET,
+                Key: objectKey
+            })
+            .promise();
+    } catch (e) {
+        if (e.code !== 'NoSuchKey') {
+            throw e;
+        }
 
-    await tab.setContent(event.content, {
-        waitUntil: 'networkidle0'
-    });
+        const browser = await puppeteer.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless
+        });
 
-    const pdf = Buffer.from(
-        // @ts-ignore
-        await pdfPage(tab, {
-            format: 'a4',
-            margin: { bottom: 32, top: 32, left: 32, right: 32 }
-        })
-    );
-    await browser.close();
+        const tab = await browser.newPage();
 
-    const objectKey = uuid();
+        await tab.setContent(event.content, {
+            waitUntil: 'networkidle0'
+        });
 
-    await s3.putObject({
-        Bucket: ASSET_BUCKET,
-        Key: objectKey,
-        Body: pdf,
-        ContentType: 'application/pdf',
-        ACL: 'private'
-    }).promise();
+        const pdf = Buffer.from(
+            // @ts-ignore
+            await pdfPage(tab, {
+                format: 'a4',
+                margin: { bottom: 32, top: 32, left: 32, right: 32 }
+            })
+        );
+        await browser.close();
+
+        await s3.putObject({
+            Bucket: ASSET_BUCKET,
+            Key: objectKey,
+            Body: pdf,
+            ContentType: 'application/pdf',
+            ACL: 'private'
+        }).promise();
+    }
 
     const fileName = event.fileName.endsWith('.pdf') ? event.fileName : `${event.fileName}.pdf`;
     return {
