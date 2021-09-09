@@ -13,7 +13,7 @@ Resources:
       Properties:
         Location:
           ApplicationId: arn:aws:serverlessrepo:eu-central-1:973295464626:applications/content-to-pdf
-          SemanticVersion: 1.0.0
+          SemanticVersion: 1.1.0
         Parameters:
           MemorySize: 2048
           Timeout: 10

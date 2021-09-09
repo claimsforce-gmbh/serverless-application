@@ -28,7 +28,7 @@ Metadata:
       - pdf
       - html
     HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
-    SemanticVersion: 1.0.0
+    SemanticVersion: 1.1.0
     SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
 
 Resources:
