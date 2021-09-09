@@ -36,6 +36,14 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - '*'
       LifecycleConfiguration:
         Rules:
           - Status: Enabled
