@@ -14,6 +14,15 @@ Parameters:
   AssetExpirationInDays:
     Type: String
     Default: 1
+  EnableCompression:
+    Type: String
+    Default: false
+    AllowedValues:
+      - false
+      - true
+
+Conditions:
+  EnableCompression: !Equals [ !Ref EnableCompression, true ]
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -28,7 +37,7 @@ Metadata:
       - pdf
       - html
     HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
-    SemanticVersion: 1.1.0
+    SemanticVersion: 1.2.0
     SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/content-to-pdf
 
 Resources:
@@ -65,6 +74,9 @@ Resources:
       Environment:
         Variables:
           ASSET_BUCKET: !Ref AssetBucket
+          ENABLE_COMPRESSION: !Ref EnableCompression
+      Layers:
+        - !If [ EnableCompression, !Sub 'arn:aws:lambda:${AWS::Region}:764866452798:layer:ghostscript:8', !Ref AWS::NoValue ] # https://github.com/shelfio/ghostscript-lambda-layer#ghostscript-v952
 
   ContentToPDFLogGroup:
     Type: AWS::Logs::LogGroup

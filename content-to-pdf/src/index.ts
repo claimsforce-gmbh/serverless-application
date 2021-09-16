@@ -1,11 +1,14 @@
 import AWS from 'aws-sdk';
 import chromium from 'chrome-aws-lambda';
 import contentDisposition from 'content-disposition';
+import { exec as originalExec } from 'child_process';
+import { promisify } from 'util';
+import { promises as fs } from 'fs';
 import md5 from 'md5';
 import puppeteer from 'puppeteer-core';
 import { pdfPage } from 'puppeteer-report';
 
-const { ASSET_BUCKET } = process.env as Record<string, string>;
+const { ASSET_BUCKET, ENABLE_COMPRESSION } = process.env as Record<string, string>;
 const s3 = new AWS.S3();
 
 interface RequestEvent {
@@ -17,6 +20,24 @@ interface RequestEvent {
 
 interface Response {
     url: string;
+}
+
+const exec = promisify(originalExec);
+
+const compress = async (buffer: Buffer): Promise<Buffer> => {
+    const original = md5(buffer.toString()).toString();
+    const compressed = `${original}_compressed`;
+
+    await fs.writeFile(`/tmp/${original}.pdf`, buffer);
+    await exec(
+        'gs -sDEVICE=pdfwrite ' +
+        '-dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH ' +
+        `-sOutputFile=/tmp/${compressed}.pdf /tmp/${original}.pdf`
+    );
+    const compressedPdf = await fs.readFile(`/tmp/${compressed}.pdf`);
+    await fs.unlink(`/tmp/${compressed}.pdf`);
+
+    return compressedPdf;
 }
 
 export const handler = async (event: RequestEvent): Promise<Response> => {
@@ -47,7 +68,7 @@ export const handler = async (event: RequestEvent): Promise<Response> => {
             waitUntil: 'networkidle0'
         });
 
-        const pdf = Buffer.from(
+        let pdf = Buffer.from(
             // @ts-ignore
             await pdfPage(tab, {
                 format: 'a4',
@@ -55,6 +76,10 @@ export const handler = async (event: RequestEvent): Promise<Response> => {
             })
         );
         await browser.close();
+
+        if (ENABLE_COMPRESSION === 'true') {
+            pdf = await compress(pdf);
+        }
 
         await s3.putObject({
             Bucket: ASSET_BUCKET,

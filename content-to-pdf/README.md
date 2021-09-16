@@ -13,12 +13,13 @@ Resources:
       Properties:
         Location:
           ApplicationId: arn:aws:serverlessrepo:eu-central-1:973295464626:applications/content-to-pdf
-          SemanticVersion: 1.1.0
+          SemanticVersion: 1.2.0
         Parameters:
           MemorySize: 2048
           Timeout: 10
           LogRetentionInDays: 14
           AssetExpirationInDays: 1
+          EnableCompression: false
 ```
 
 ### Install through AWS Console
@@ -41,6 +42,11 @@ The AWS CloudWatch `RetentionInDays` configuration of the AWS Lambda who is doin
 
 #### AssetExpirationInDays (Default: `1`)
 The AWS S3 `ExpirationInDays` configuration for generated PDFs.
+
+#### EnableCompression (Default: `false`)
+A configuration to compress the generated PDF with Ghostscript.
+
+In case this configuration is set to `true` please be aware that the execution time will increase and because of that we recommend to increase the `Timeout` to at least `15`.
 
 ## How to use it?
 
