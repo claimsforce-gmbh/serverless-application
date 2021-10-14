@@ -34,7 +34,7 @@ export const handler = async (event: SNSEvent): Promise<string> => {
     const s3Event: S3Event = JSON.parse(event.Records[0].Sns.Message);
     const s3Params = {
         Bucket: s3Event.Records[0].s3.bucket.name,
-        Key: s3Event.Records[0].s3.object.key,
+        Key: decodeURIComponent(s3Event.Records[0].s3.object.key.replace(/\+/g, ' ')),
         VersionId: s3Event.Records[0].s3.object.versionId
     };
     const { Body: objectBody } = await s3.getObject(s3Params).promise();
