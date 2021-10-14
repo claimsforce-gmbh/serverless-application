@@ -72,7 +72,9 @@ Resources:
               Effect: Allow
               Action:
                 - s3:getObject
+                - s3:getObjectVersion
                 - s3:putObjectTagging
+                - s3:putObjectVersionTagging
               Resource:
                 - !Sub arn:aws:s3:::${BucketName}/*
       DeadLetterQueue:
