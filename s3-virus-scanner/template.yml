@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MemorySize:
+    Type: String
+    Default: 2048
+  Timeout:
+    Type: String
+    Default: 60
+  LogRetentionInDays:
+    Type: String
+    Default: 14
+  BucketName:
+    Type: String
+  NotificationTopicArn:
+    Type: String
+  DeadLetterQueueNotificationTopicArn:
+    Type: String
+    Default: ''
+
+Conditions:
+  EnableDeadLetterQueueNotification: !Not [ !Equals [ !Ref DeadLetterQueueNotificationTopicArn, '' ] ]
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: s3-virus-scanner
+    Description: Check S3 objects for viruses.
+    Author: claimsforce GmbH
+    SpdxLicenseId: MIT
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels:
+      - virus
+      - scanner
+    HomePageUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/s3-virus-scanner
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/claimsforce-gmbh/serverless-application/tree/main/s3-virus-scanner
+
+Resources:
+  S3VirusScannerDLQ:
+    Type: AWS::SQS::Queue
+
+  S3VirusScannerSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !GetAtt S3VirusScanner.Arn
+      Protocol: lambda
+      TopicArn: !Ref NotificationTopicArn
+
+  S3VirusScannerSubscriptionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt S3VirusScanner.Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref NotificationTopicArn
+
+  S3VirusScanner:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageUri: .build
+      ImageConfig:
+        Command:
+          - /var/task/dist/index.handler
+      MemorySize: !Ref MemorySize
+      Timeout: !Ref Timeout
+      Policies:
+        - Statement:
+            - Sid: S3VirusScannerPolicy
+              Effect: Allow
+              Action:
+                - s3:getObject
+                - s3:putObjectTagging
+              Resource:
+                - !Sub arn:aws:s3:::${BucketName}/*
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt S3VirusScannerDLQ.Arn
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: clamavlambda-1.0.0
+
+  S3VirusScannerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !Ref LogRetentionInDays
+      LogGroupName: !Sub /aws/lambda/${S3VirusScanner}
+
+  S3VirusScannerDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: EnableDeadLetterQueueNotification
+    Properties:
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt S3VirusScannerDLQ.QueueName
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Threshold: 1
+      AlarmActions:
+        - !Ref DeadLetterQueueNotificationTopicArn

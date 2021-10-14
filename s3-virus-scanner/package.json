@@ -1,0 +1,31 @@
+{
+    "name": "s3-virus-scanner",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Maik Schmidt",
+            "email": "maik@claimsforce.com"
+        },
+        {
+            "name": "Sahel Nuri",
+            "email": "sahel.nuri@claimsforce.com"
+        }
+    ],
+    "scripts": {
+        "tsc": "npx tsc",
+        "build": "npx tsc && npx rimraf node_modules && npm install --only=production && cp -R node_modules .build/ && cd .build && tar -zcvf build.tar.gz *",
+        "sam:prepare": "npm run build && sam build && sam package --output-template-file packaged.yml --s3-bucket serverlessapplication-artifacts-o9oluwjniatl --image-repository 973295464626.dkr.ecr.eu-central-1.amazonaws.com/serverlessapplication-imagerepository-6lqx9rfvd6gy",
+        "sam:publish": "npm run sam:prepare && sam publish --template packaged.yml --region eu-central-1 && rm packaged.yml"
+    },
+    "dependencies": {
+        "aws-sdk": "2.1005.0",
+        "clamscan": "2.0.1"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "8.10.84",
+        "@types/node": "16.10.3",
+        "rimraf": "3.0.2",
+        "ts-node": "10.1.0",
+        "typescript": "4.3.5"
+    }
+}
