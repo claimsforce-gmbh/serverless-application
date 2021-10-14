@@ -28,6 +28,23 @@ Resources:
           - Event: s3:ObjectCreated:Put
             Topic: !Ref Notifier
 
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Deny
+            Action:
+              - s3:*
+            Resource:
+              - !Sub arn:aws:s3:::${Bucket}/*
+            Principal: '*'
+            Condition:
+              StringEquals:
+                s3:ExistingObjectTag/av-status: infected
+
   S3VirusScanner:
     Type: AWS::Serverless::Application
     Properties:
