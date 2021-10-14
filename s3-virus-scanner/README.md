@@ -8,19 +8,19 @@ Check S3 objects for viruses and tag them with `clean` or `infected`.
 
 ```yml
 Resources:
-    S3VirusScanner:
-      Type: AWS::Serverless::Application
-      Properties:
-        Location:
-          ApplicationId: arn:aws:serverlessrepo:eu-central-1:973295464626:applications/s3-virus-scanner
-          SemanticVersion: 1.0.0
-        Parameters:
-          MemorySize: 2048
-          Timeout: 60
-          LogRetentionInDays: 14
-          BucketName: s3-bucket-to-scan
-          NotificationTopicArn: arn:aws:sns:...
-          DeadLetterQueueNotificationTopicArn: arn:aws:sns:...
+  S3VirusScanner:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location:
+        ApplicationId: arn:aws:serverlessrepo:eu-central-1:973295464626:applications/s3-virus-scanner
+        SemanticVersion: 1.0.0
+      Parameters:
+        MemorySize: 2048
+        Timeout: 60
+        LogRetentionInDays: 14
+        BucketName: s3-bucket-to-scan
+        NotificationTopicArn: arn:aws:sns:...
+        DeadLetterQueueNotificationTopicArn: arn:aws:sns:...
 ```
 
 ### Install through AWS Console
