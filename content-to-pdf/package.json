@@ -19,7 +19,7 @@
         "content-disposition": "0.5.3",
         "md5": "2.3.0",
         "puppeteer-core": "10.2.0",
-        "puppeteer-report": "3.0.1"
+        "puppeteer-report": "2.0.4"
     },
     "devDependencies": {
         "@types/content-disposition": "0.5.4",
